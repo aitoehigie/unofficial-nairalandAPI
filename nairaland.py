@@ -46,7 +46,7 @@ def change_email(email, email2):
 	user.post("http://www.nairaland.com/do_changeemail", data=dict(email=email, email2=email2, session=user.cookies["session"]))
 
 def change_password(oldpassword, password, password2):
-	user.post("http://www.nairaland.com/do_changepass", data=dict(oldpassword, password=password, password2=password2, session=user.cookies["session"]))
+	user.post("http://www.nairaland.com/do_changepass", data=dict(oldpassword=oldpassword, password=password, password2=password2, session=user.cookies["session"]))
 	
 
 
