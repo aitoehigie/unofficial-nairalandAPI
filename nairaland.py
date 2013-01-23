@@ -24,26 +24,28 @@ Jobs_vacancies=29, Career=35, certification_and_training_adverts=62, NYSC=79, Ed
 Properties=47, Health=19, Travel=2, travel_ads=77, Family=5, Culture=55, Religion=17, islam_for_muslims=44, Food=41, Nairaland_ads=80
 )
 global username, password, url, user
-username = "nairaland_username"
-password="nairaland_password"
+username = ""
+password=""
 url="http://www.nairaland.com"
 login_params = dict(name=username, password=password)
+user_agent = {"User-Agent":'Mozilla/5 (Solaris 10) Gecko'} #Needed to spoof my headers to make requests appear to be coming from a browser
 
 def login():
 	user = requests.Session()
-	user.post("http://www.nairaland.com/do_login", data=login_params)
+	user.post("http://www.nairaland.com/do_login", data=login_params, headers = user_agent)
 	return user
 
 user = login()
 
 def logout():
-	user.post("http://www.nairaland.com/do_logout", params=user.cookies["session"])
+	user.post("http://www.nairaland.com/do_logout", params=user.cookies["session"], headers = user_agent)
 
 def post(title, body, board):
 	user.post("http://www.nairaland.com/do_newtopic", data=dict(title=title, body=body, board=board, session=user.cookies["session"]))
 
-def change_email(email, email2):
-	user.post("http://www.nairaland.com/do_changeemail", data=dict(email=email, email2=email2, session=user.cookies["session"]))
+#def change_email(password, email, email2):
+	#user.post("http://www.nairaland.com/do_changeemail", data=dict(password=password, email=email, email2=email2, session=user.cookies["session"]))
+#The above change_email function doesnt appear to work. Still on the matter
 
 def change_password(oldpassword, password, password2):
 	user.post("http://www.nairaland.com/do_changepass", data=dict(oldpassword=oldpassword, password=password, password2=password2, session=user.cookies["session"]))
