@@ -11,7 +11,7 @@ Date=19/01/2013
 #knockyourselfout
 #**************************************************************************************
 
-import requests, urllib, urllib2
+import requests
 
 nairaland_boards = dict(
 Technology=8, Programming=34, software_programmer_market=76, Webmasters=30, web_market=52, Computers=22, computer_market=74,
@@ -23,16 +23,18 @@ violent_disgusting_non_celebrity_crimes=1,Romance=21, dating_and_meeting_zone=38
 Jobs_vacancies=29, Career=35, certification_and_training_adverts=62, NYSC=79, Education=13, educational_services=57,Autos=26, Cartalk=78,
 Properties=47, Health=19, Travel=2, travel_ads=77, Family=5, Culture=55, Religion=17, islam_for_muslims=44, Food=41, Nairaland_ads=80
 )
-global username, password, url, user
-username = ""
+global name, password, url, user_agent
+name = ""
 password=""
 url="http://www.nairaland.com"
-login_params = dict(name=username, password=password)
-user_agent = {"User-Agent":'Mozilla/5 (Solaris 10) Gecko'} #Needed to spoof my headers to make requests appear to be coming from a browser
+login_params = dict(name=name, password=password)
+#Needed to spoof my headers to make requests appear to be coming from a browser
+user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1944.0 Safari/537.36'
 
 def login():
 	user = requests.Session()
-	user.post("http://www.nairaland.com/do_login", data=login_params, headers = user_agent)
+	user.post("http://www.nairaland.com/do_login", data=login_params)
+	user.headers.update({"User-Agent":user_agent})
 	return user
 
 user = login()
