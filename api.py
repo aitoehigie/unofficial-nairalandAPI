@@ -53,7 +53,7 @@ class Nairaland(object):
         self.name = name
         self.password = password
         self.login_params = dict(name=self.name, password=self.password)
-    self.login()
+    #self.login()
 
     def login(self):
         self.user = requests.Session()
@@ -63,7 +63,7 @@ class Nairaland(object):
                                    Chrome/36.0.1944.0 Safari/537.36"})
         self.user.post("http://www.nairaland.com/do_login",
                         data=self.login_params)
-    return self.user
+        return self.user
 
     def post_topic(self, title, body, board):
         self.user.post("http://www.nairaland.com/do_newtopic",
