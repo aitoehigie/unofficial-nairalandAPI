@@ -6,7 +6,7 @@ description = Unofficial nairaland API written in python.
 author = Pystar
 author_email = aitoehigie@gmail.com.
 Date = 19/01/2013
-Revised: June 2014
+Revised: June 2014, February 2015
 """
 
 # **************************************************************************************
