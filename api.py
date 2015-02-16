@@ -57,4 +57,10 @@ def login(name=NAME, password=PASSWORD)
     user = session.post(ROOT_URL+"do_login", data=login_params)
     return user
 
+def logout():
+     user.post(ROOT_URL+"do_logout", data=user.cookies["session"])
+
+def postNewTopic(title, body, board):
+    user.post(ROOT_URL+"do_newtopic", title=title, body=body, board=board, session=user.cookies["session"])
+
 
