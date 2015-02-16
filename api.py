@@ -63,4 +63,7 @@ def logout():
 def postNewTopic(title, body, board):
     user.post(ROOT_URL+"do_newtopic", title=title, body=body, board=board, session=user.cookies["session"])
 
+if __name__ == "__main__":
+    login(name=NAME, password=PASSWORD)
+
 
