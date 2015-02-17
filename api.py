@@ -67,6 +67,9 @@ class NairalandUser():
     def postNewTopic(self, title, body, board):
 		self.user.post(ROOT_URL+"do_newtopic", data = dict(title=title, body=body, board=board, session=self.user.cookies["session"]))
 
+    def getBoardID(self, board):
+        return BOARDS[board]
+
 if __name__ == "__main__":
     login(name=NAME, password=PASSWORD)
 
