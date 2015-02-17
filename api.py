@@ -49,19 +49,23 @@ NAME = "nairaland username"
 PASSWORD = "nairaland password"
 ROOT_URL = "http://www.nairaland.com/"
 
+class NairalandUser():
+    def __init__(self, name, password):
+        self.name = name
+        self.password = password
+        self.payload = dict(name = self.name, password = self.password)
+        self.login()
+    
+    def login(self):
+        self.user = requests.Session()
+        self.user.post(ROOT_URL+"do_login", data=self.payload)
+        return self.user
 
-def login(name=NAME, password=PASSWORD)
-    #Nairaland login function
-    login_params = dict(name = NAME, password = PASSWORD)
-    session = requests.Session()
-    user = session.post(ROOT_URL+"do_login", data=login_params)
-    return user
-
-def logout():
-     user.post(ROOT_URL+"do_logout", data=user.cookies["session"])
-
-def postNewTopic(title, body, board):
-    user.post(ROOT_URL+"do_newtopic", title=title, body=body, board=board, session=user.cookies["session"])
+    def logout(self):
+        self.user.post(ROOT_URL+"do_logout", data=self.user.cookies["session"])
+    
+    def postNewTopic(self, title, body, board):
+		self.user.post(ROOT_URL+"do_newtopic", data = dict(title=title, body=body, board=board, session=self.user.cookies["session"]))
 
 if __name__ == "__main__":
     login(name=NAME, password=PASSWORD)
