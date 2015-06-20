@@ -70,15 +70,12 @@ class NairalandUser():
         self.payload = dict(title=title, body=body, board=board, session=self.user.cookies["session"])
         self.user.post(ROOT_URL+"do_newtopic", data = self.payload )
 
-    def getBoardID(self, board):
-        return BOARDS[board]
-
     #def editProfile(self):
         #self.user.post(ROOT_URL+"do_editprofile", data=payload)
 
     #def changeEmail(self, newEmail):
-        #self.payload = dict(email=newEmail)
-        #self.user.post(ROOT_URL+"do_changeemail", data=self.payload)
+        #self.payload = dict(email=newEmail, session=self.user.cookies["session"])
+        #self.user.post(ROOT_URL+"do_changeemail_", data=self.payload)
         #TODO incomplete functionality
 
     def changePassword(self, oldPassword, newPassword):
@@ -89,8 +86,12 @@ class NairalandUser():
         self.payload = dict(session=self.user.cookies["session"], member=memberid, redirect="%2F"+username)
         self.user.post(ROOT_URL+"do_followmember", data=self.payload)
 
+    #def deactivateAccount(self):
+        #this will send a deactivation link to the users email address
+        #self.payload = dict(session=self.user.cookies["session"])
+        #self.user.post(ROOT_URL+"send_confirmation_email_for_account_deactivation", data=self.payload)
+        #TODO, I have realized I have to also add mechanize
+
 
 if __name__ == "__main__":
-    login(name=NAME, password=PASSWORD)
-
-
+    NairalandUser(USERNAME, PASSWORD)
