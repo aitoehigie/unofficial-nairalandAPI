@@ -1,0 +1,204 @@
+==========
+Fixed Bugs
+==========
+
+This file includes tests for bugs that were found and then fixed that don't fit
+into the more documentation-centric sections above.
+
+    >>> from zope.testbrowser.ftests.wsgitestapp import WSGITestApplication
+    >>> from zope.testbrowser.wsgi import Browser
+    >>> wsgi_app = WSGITestApplication()
+
+Unicode URLs
+============
+
+Unicode URLs or headers cause the entire constructed request to be unicode, and
+(as of Python 2.4.4) Cookie.SimpleCookie checks the type of the input against
+type(""), so it handles the value inappropriately, causing exceptions that
+ended with::
+
+      File "/home/benji/Python-2.4.4/lib/python2.4/Cookie.py", line 623, in load
+        self.update(rawdata)
+    ValueError: dictionary update sequence element #0 has length 1; 2 is required
+
+As a work-around, unicode strings passed to Browser.open() are now converted to
+ASCII before being passed on, as well as the key and value passed to
+Browser.addHeader().
+
+The tests below failed before the change was put in place.
+
+    >>> browser = Browser(wsgi_app=wsgi_app)
+    >>> browser.addHeader('Cookie', 'test')
+    >>> browser.open(u'http://localhost/@@/testbrowser/simple.html')
+
+    >>> browser = Browser(wsgi_app=wsgi_app)
+    >>> browser.addHeader(u'Cookie', 'test')
+    >>> browser.open('http://localhost/@@/testbrowser/simple.html')
+
+
+Spaces in URL
+=============
+
+When URLs have spaces in them, they're handled correctly (before the bug was
+fixed, you'd get "ValueError: too many values to unpack"):
+
+    >>> browser.open('http://localhost/@@/testbrowser/navigate.html')
+    >>> browser.getLink('Spaces in the URL').click()
+
+
+.goBack() Truncation
+====================
+
+The .goBack() method used to truncate the .contents.
+
+    >>> browser.open('http://localhost/@@/testbrowser/navigate.html')
+    >>> actual_length = len(browser.contents)
+
+    >>> browser.open('http://localhost/@@/testbrowser/navigate.html')
+    >>> browser.open('http://localhost/@@/testbrowser/simple.html')
+    >>> browser.goBack()
+    >>> len(browser.contents) == actual_length
+    True
+
+
+Labeled Radio Buttons
+=====================
+
+The .getControl() method was sometimes unable to find radio buttons by label.
+
+    >>> # import mechanize._form; mechanize._form._show_debug_messages()
+    >>> browser.open('http://localhost/@@/testbrowser/radio.html')
+    >>> browser.getControl('One').optionValue
+    '1'
+    >>> browser.getControl('Two').optionValue
+    '2'
+    >>> browser.getControl('Three').optionValue
+    '3'
+
+
+Fragment URLs
+=============
+
+Earlier versions of mechanize used to incorrectly follow links containing
+fragments. We upgraded our dependency to a newer version of mechanize and make
+sure this regression doesn't come back:
+
+    >>> browser.open('http://localhost/@@/testbrowser/fragment.html#asdf')
+    >>> browser.url
+    'http://localhost/@@/testbrowser/fragment.html#asdf'
+    >>> browser.getLink('Follow me')
+    <Link text='Follow me' url='http://localhost/@@/testbrowser/fragment.html#foo'>
+    >>> browser.getLink('Follow me').click()
+
+
+Textareas with HTML/XML
+=======================
+
+    >>> browser.open('http://localhost/@@/testbrowser/textarea.html')
+    >>> browser.getControl('Text Area').value
+    '<block>\r\n  <feed/>\r\n    &\r\n</block>'
+
+
+.click() with non-200 status
+============================
+
+The problem was that with the below controls testbrowser forgot to do
+after-processing after an exception in mechanize.
+That means ``_stop_timer()`` and ``_changed()`` were not executed if an exception
+was raised. Not calling ``_changed()`` resulted in not refreshing ``contents``.
+The ``contents`` property gets cached on any first access and should be reset
+on any navigation.
+The problem is that e.g. a simple 403 status raises an exception.
+
+This is how it works with a simple open():
+
+    >>> browser.handleErrors=False
+
+    >>> browser.open('http://localhost/set_status.html')
+    >>> print browser.contents
+    Everything fine
+
+    >>> browser.open('http://localhost/set_status.html?status=403')
+    Traceback (most recent call last):
+    ...
+    HTTPError: HTTP Error 403: Forbidden
+
+    >>> print browser.contents
+    Just set a status of 403
+
+
+These are the various controls:
+
+A link:
+
+    >>> browser.open('http://localhost/@@/testbrowser/status_lead.html')
+    >>> print browser.contents
+    <html>...
+
+    >>> browser.getLink('403').click()
+    Traceback (most recent call last):
+    ...
+    HTTPError: HTTP Error 403: Forbidden
+
+    >>> print browser.contents
+    Just set a status of 403
+
+A submit button:
+
+    >>> browser.open('http://localhost/@@/testbrowser/status_lead.html')
+    >>> print browser.contents
+    <html>...
+
+    >>> browser.getControl(name='status').value = '404'
+    >>> browser.getControl('Submit This').click()
+    Traceback (most recent call last):
+    ...
+    HTTPError: HTTP Error 404: Not Found
+
+    >>> print browser.contents
+    Just set a status of 404
+
+A submit image control:
+
+    >>> browser.open('http://localhost/@@/testbrowser/status_lead.html')
+    >>> print browser.contents
+    <html>...
+
+    >>> browser.getControl(name='status').value = '403'
+    >>> browser.getControl(name='image-value').click()
+    Traceback (most recent call last):
+    ...
+    HTTPError: HTTP Error 403: Forbidden
+
+    >>> print browser.contents
+    Just set a status of 403
+
+A javascript-ish form submit:
+
+    >>> browser.open('http://localhost/@@/testbrowser/status_lead.html')
+    >>> print browser.contents
+    <html>...
+
+    >>> browser.getControl(name='status').value = '404'
+    >>> browser.getForm(name='theform').submit()
+    Traceback (most recent call last):
+    ...
+    HTTPError: HTTP Error 404: Not Found
+
+    >>> print browser.contents
+    Just set a status of 404
+
+A non-javascript-ish form submit:
+
+    >>> browser.open('http://localhost/@@/testbrowser/status_lead.html')
+    >>> print browser.contents
+    <html>...
+
+    >>> browser.getControl(name='status').value = '403'
+    >>> browser.getForm(name='theform').submit(name='submit-value')
+    Traceback (most recent call last):
+    ...
+    HTTPError: HTTP Error 403: Forbidden
+
+    >>> print browser.contents
+    Just set a status of 403

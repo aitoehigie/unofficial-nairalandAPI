@@ -13,6 +13,8 @@ Revised: June 2014, February 2015, June 2015
 # **************************************************************************************
 
 import requests
+from splinter import Browser
+browser = Browser("zope.testbrowser")
 
 BOARDS = dict(
                         Technology=8, Programming=34,
@@ -64,7 +66,7 @@ class NairalandUser():
 
     def logout(self):
         self.payload = self.user.cookies["session"]
-        self.user.post(ROOT_URL+"do_logout", data=payload)
+        self.user.post(ROOT_URL+"do_logout", data=self.payload)
     
     def postNewTopic(self, title, body, board):
         self.payload = dict(title=title, body=body, board=board, session=self.user.cookies["session"])
@@ -86,11 +88,10 @@ class NairalandUser():
         self.payload = dict(session=self.user.cookies["session"], member=memberid, redirect="%2F"+username)
         self.user.post(ROOT_URL+"do_followmember", data=self.payload)
 
-    #def deactivateAccount(self):
-        #this will send a deactivation link to the users email address
-        #self.payload = dict(session=self.user.cookies["session"])
-        #self.user.post(ROOT_URL+"send_confirmation_email_for_account_deactivation", data=self.payload)
-        #TODO, I have realized I have to also add mechanize
+    def deactivateAccount(self):
+        self.payload = dict(session=self.user.cookies["session"])
+        self.user.post(ROOT_URL+"send_confirmation_email_for_account_deactivation", data=self.payload)
+        self.user.post(ROOT_URL+"do_send_confirmation_email_for_account_deactivation", data=self.payload)
 
 
 if __name__ == "__main__":

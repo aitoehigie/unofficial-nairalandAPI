@@ -1,0 +1,18 @@
+mechanize>=0.2.0
+setuptools
+zope.interface
+zope.schema
+pytz > dev
+
+[test]
+zope.testing
+WebTest
+
+[zope-functional-testing]
+zope.app.testing >= 3.9.0dev
+
+[test_bbb]
+zope.testbrowser [test,zope-functional-testing]
+
+[wsgi]
+WebTest

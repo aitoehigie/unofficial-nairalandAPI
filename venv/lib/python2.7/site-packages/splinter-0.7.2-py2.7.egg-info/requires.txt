@@ -1,0 +1,16 @@
+selenium>=2.44.0
+
+[flask]
+Flask>=0.10
+lxml>=2.3.6
+cssselect
+
+[zope.testbrowser]
+zope.testbrowser>=4.0.4
+lxml>=2.3.6
+cssselect
+
+[django]
+Django>=1.5.8,<1.7
+lxml>=2.3.6
+cssselect
