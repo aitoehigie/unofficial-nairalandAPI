@@ -3,10 +3,11 @@
 # **************************************************************************************
 """
 description = Unofficial nairaland API written in python.
+version = 0.9.1
 author = Pystar
 author_email = aitoehigie@gmail.com.
 Date = 19/01/2013
-Revised: June 2014, February 2015
+Revised: June 2014, February 2015, June 2015
 """
 
 # **************************************************************************************
@@ -83,6 +84,10 @@ class NairalandUser():
     def changePassword(self, oldPassword, newPassword):
         self.payload = dict(oldpassword=oldPassword, password=newPassword, password2=newPassword, session=self.user.cookies["session"])
         self.user.post(ROOT_URL+"do_changepass", data=self.payload)
+
+    def followMember(self, memberid=None, username=None):
+        self.payload = dict(session=self.user.cookies["session"], member=memberid, redirect="%2F"+username)
+        self.user.post(ROOT_URL+"do_followmember", data=self.payload)
 
 
 if __name__ == "__main__":
