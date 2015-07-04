@@ -45,8 +45,8 @@ BOARDS = dict(
                         Culture=55, Religion=17, islam_for_muslims=44, Food=41,
                         Nairaland_ads=80
 )
-user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) \
-AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1944.0 Safari/537.36'
+HEADERS = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+headers = {"User-Agent": HEADERS}
 
 NAME = "nairaland username"
 PASSWORD = "nairaland password"
@@ -61,37 +61,40 @@ class NairalandUser():
     
     def login(self):
         self.user = requests.Session()
-        self.user.post(ROOT_URL+"do_login", data=self.payload)
+        self.user.post(ROOT_URL+"do_login", data=self.payload, headers=headers)
         return self.user
 
     def logout(self):
         self.payload = self.user.cookies["session"]
-        self.user.post(ROOT_URL+"do_logout", data=self.payload)
+        self.user.post(ROOT_URL+"do_logout", data=self.payload, headers=headers)
     
     def postNewTopic(self, title, body, board):
         self.payload = dict(title=title, body=body, board=board, session=self.user.cookies["session"])
-        self.user.post(ROOT_URL+"do_newtopic", data = self.payload )
+        self.user.post(ROOT_URL+"do_newtopic", data = self.payload, headers=headers )
 
     #def editProfile(self):
-        #self.user.post(ROOT_URL+"do_editprofile", data=payload)
+        #self.user.post(ROOT_URL+"do_editprofile", data=payload, headers=headers)
 
     #def changeEmail(self, newEmail):
         #self.payload = dict(email=newEmail, session=self.user.cookies["session"])
-        #self.user.post(ROOT_URL+"do_changeemail_", data=self.payload)
+        #self.user.post(ROOT_URL+"do_changeemail_", data=self.payload, headers=headers)
         #TODO incomplete functionality
 
     def changePassword(self, oldPassword, newPassword):
         self.payload = dict(oldpassword=oldPassword, password=newPassword, password2=newPassword, session=self.user.cookies["session"])
-        self.user.post(ROOT_URL+"do_changepass", data=self.payload)
+        self.user.post(ROOT_URL+"do_changepass", data=self.payload, headers=headers)
 
     def followMember(self, memberid=None, username=None):
         self.payload = dict(session=self.user.cookies["session"], member=memberid, redirect="%2F"+username)
-        self.user.post(ROOT_URL+"do_followmember", data=self.payload)
+        self.user.post(ROOT_URL+"do_followmember", data=self.payload, headers=headers)
 
     def deactivateAccount(self):
         self.payload = dict(session=self.user.cookies["session"])
-        self.user.post(ROOT_URL+"send_confirmation_email_for_account_deactivation", data=self.payload)
-        self.user.post(ROOT_URL+"do_send_confirmation_email_for_account_deactivation", data=self.payload)
+        self.user.post(ROOT_URL+"send_confirmation_email_for_account_deactivation", data=self.payload, headers=headers)
+        self.user.post(ROOT_URL+"do_send_confirmation_email_for_account_deactivation", data=self.payload, headers=headers)
+
+    def editProfile(self):
+        pass
 
 
 if __name__ == "__main__":
