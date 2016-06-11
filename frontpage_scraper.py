@@ -9,5 +9,12 @@ data = page.text
 
 soup = BeautifulSoup(data, "html.parser")
 
-for item in soup.find_all("td", class_="featured w"):
-    print item
+def scrape():
+    for item in soup.find_all("td", class_="featured w"):
+        for link in item.find_all("a"):
+            print link.text, ":", link.get("href")
+
+
+
+if __name__ == "__main__":
+    scrape()
