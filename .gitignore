@@ -1,0 +1,10 @@
+.DS_Store
+.pyc
+.pyo
+venv
+env
+env*
+dist
+build
+.idea
+.cache/
