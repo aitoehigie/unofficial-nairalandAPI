@@ -1,0 +1,16 @@
+.DS_Store
+.pyc
+.pyo
+venv
+env
+env*
+dist
+build
+
+//Vim temporary files
+*~
+*.swp
+.swo
+
+.idea
+.cache/
